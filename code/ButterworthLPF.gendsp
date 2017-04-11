@@ -1,0 +1,190 @@
+{
+	"patcher" : 	{
+		"fileversion" : 1,
+		"appversion" : 		{
+			"major" : 7,
+			"minor" : 3,
+			"revision" : 3,
+			"architecture" : "x64",
+			"modernui" : 1
+		}
+,
+		"rect" : [ 177.0, -894.0, 580.0, 670.0 ],
+		"editing_bgcolor" : [ 0.9, 0.9, 0.9, 1.0 ],
+		"bglocked" : 0,
+		"openinpresentation" : 0,
+		"default_fontsize" : 12.0,
+		"default_fontface" : 0,
+		"default_fontname" : "Arial",
+		"gridonopen" : 1,
+		"gridsize" : [ 15.0, 15.0 ],
+		"gridsnaponopen" : 1,
+		"objectsnaponopen" : 1,
+		"statusbarvisible" : 2,
+		"toolbarvisible" : 1,
+		"lefttoolbarpinned" : 0,
+		"toptoolbarpinned" : 0,
+		"righttoolbarpinned" : 0,
+		"bottomtoolbarpinned" : 0,
+		"toolbars_unpinned_last_save" : 0,
+		"tallnewobj" : 0,
+		"boxanimatetime" : 200,
+		"enablehscroll" : 1,
+		"enablevscroll" : 1,
+		"devicewidth" : 0.0,
+		"description" : "",
+		"digest" : "",
+		"tags" : "",
+		"style" : "",
+		"subpatcher_template" : "",
+		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-7",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 506.5, 592.0, 51.0, 22.0 ],
+					"style" : "",
+					"text" : "dcblock"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 33.0, 592.0, 51.0, 22.0 ],
+					"style" : "",
+					"text" : "dcblock"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "Param A(0, min = 0, max = 1);\r\nParam B(0.1, min = 0, max = 1.4);\r\nParam C(1, min = 0, max = 2);\r\nParam D(0.5, min = 0, max = 1);\r\nParam E(0, min = 0, max = 1);\r\nParam Push(0, min = 0, max = 1);\r\n\r\nHistory yLp(0);\r\nHistory yLpp(0);\r\n\r\nHistory yRp(0);\r\nHistory yRpp(0);\r\n\r\nHistory param_gain(samplerate);\r\nHistory sum_db(0);\r\n\r\nxL = in1;\r\nxR = in2;\r\n\r\ngainL = atodb(xL);\r\ngainR = atodb(xR);\r\n\r\nif(gainL < -40) {\r\n\tif(sum_db > samplerate / 10) {\r\n\t\tparam_gain = samplerate;\r\n\t}\r\n\telse {\r\n\t\tsum_db += 1;\r\n\t}\r\n}\r\nelse {\r\n\tsum_db = 0;\r\n}\r\n\r\nfreq = A;\r\nres = B * (param_gain / samplerate);\r\nspeed = C;\r\ndrywet = D;\r\n\r\nfc = 20.0 * pow(1000.0, freq) / samplerate;\r\n\r\na1 =  (1.0 + 2.0 * res * PI * fc + 4.0 * (PI * fc) * (PI * fc)) * 2.2;\r\na2 = (-2.0 + 8.0 * (PI * fc) * (PI * fc)) * 2.2;\r\na3 =  (1.0 - 2.0 * res * PI * fc + 4.0 * (PI * fc) * (PI * fc)) * 2.2;\r\n\r\n\r\nb0 =  4.0 * (PI * fc) * (PI * fc);\r\nb1 =  8.0 * (PI * fc) * (PI * fc);\r\nb2 =  4.0 * (PI * fc) * (PI * fc);\r\n\r\na2 /= a1;\r\na3 /= a1;\r\nb0 /= a1;\r\nb1 /= a1;\r\nb2 /= a1;\r\n\r\nsum_x_bx_L = b0 * xL + b1 * yLp + b2 * yLpp;\r\nsum_x_ay_L = a2 * yLp + a3 * yLpp;\r\n\r\nsum_x_bx_R = b0 * xR + b1 * yRp + b2 * yRpp;\r\nsum_x_ay_R = a2 * yRp + a3 * yRpp;\r\n\r\nyL = sum_x_bx_L - sum_x_ay_L;\r\nyR = sum_x_bx_R - sum_x_ay_R;\r\n\r\nyLpp = yLp;\r\nyLp = yL;\r\n\r\nyRpp = yRp;\r\nyRp = yR;\r\n\r\nparam_gain -= speed;\r\nif(param_gain < 0) {\r\n\tparam_gain = 0;\r\n}\r\n\r\nout1 = (1.0 - drywet) * xL + drywet * yL;\r\nout2 = (1.0 - drywet) * xR + drywet * yR;",
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-6",
+					"maxclass" : "codebox",
+					"numinlets" : 2,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 33.0, 54.0, 492.5, 526.0 ],
+					"style" : ""
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 506.5, 626.0, 37.0, 22.0 ],
+					"style" : "",
+					"text" : "out 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 33.0, 19.0, 30.0, 22.0 ],
+					"style" : "",
+					"text" : "in 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 506.5, 19.0, 30.0, 22.0 ],
+					"style" : "",
+					"text" : "in 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 33.0, 626.0, 37.0, 22.0 ],
+					"style" : "",
+					"text" : "out 1"
+				}
+
+			}
+ ],
+		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-6", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-6", 1 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-6", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-6", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-7", 0 ]
+				}
+
+			}
+ ]
+	}
+
+}
