@@ -97,7 +97,7 @@ typedef struct State {
 			t_sample xR = in2;
 			t_sample gainL = atodb(xL);
 			if ((gainL < (-((int)50)))) {
-				if ((m_sum_db_12 > (samplerate * ((t_sample)0.025)))) {
+				if ((m_sum_db_12 > (samplerate * ((t_sample)0.016666666666667)))) {
 					m_param_gain_11 = samplerate;
 					
 				} else {
@@ -121,15 +121,15 @@ typedef struct State {
 			t_sample b0 = ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
 			t_sample b1 = ((((int)8) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
 			t_sample b2 = ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
-			t_sample a_262 = safediv(a2, a1);
-			t_sample a_263 = safediv(a3, a1);
-			t_sample b_264 = safediv(b0, a1);
-			t_sample b_265 = safediv(b1, a1);
-			t_sample b_266 = safediv(b2, a1);
-			t_sample sum_x_bx_L = (((b_264 * xL) + (b_265 * m_yLp_7)) + (b_266 * m_yLpp_8));
-			t_sample sum_x_ay_L = ((a_262 * m_yLp_7) + (a_263 * m_yLpp_8));
-			t_sample sum_x_bx_R = (((b_264 * xR) + (b_265 * m_yRp_9)) + (b_266 * m_yRpp_10));
-			t_sample sum_x_ay_R = ((a_262 * m_yRp_9) + (a_263 * m_yRpp_10));
+			t_sample a_276 = safediv(a2, a1);
+			t_sample a_277 = safediv(a3, a1);
+			t_sample b_278 = safediv(b0, a1);
+			t_sample b_279 = safediv(b1, a1);
+			t_sample b_280 = safediv(b2, a1);
+			t_sample sum_x_bx_L = (((b_278 * xL) + (b_279 * m_yLp_7)) + (b_280 * m_yLpp_8));
+			t_sample sum_x_ay_L = ((a_276 * m_yLp_7) + (a_277 * m_yLpp_8));
+			t_sample sum_x_bx_R = (((b_278 * xR) + (b_279 * m_yRp_9)) + (b_280 * m_yRpp_10));
+			t_sample sum_x_ay_R = ((a_276 * m_yRp_9) + (a_277 * m_yRpp_10));
 			t_sample yL = (sum_x_bx_L - sum_x_ay_L);
 			t_sample yR = (sum_x_bx_R - sum_x_ay_R);
 			m_yLpp_8 = m_yLp_7;
@@ -141,11 +141,11 @@ typedef struct State {
 				m_param_gain_11 = ((int)0);
 				
 			};
-			t_sample expr_267 = (((((int)1) - m_D_4) * xL) + (m_D_4 * yL));
-			t_sample expr_268 = (((((int)1) - m_D_4) * xR) + (m_D_4 * yR));
-			t_sample dcblock_2 = __m_dcblock_13(expr_267);
+			t_sample expr_281 = (((((int)1) - m_D_4) * xL) + (m_D_4 * yL));
+			t_sample expr_282 = (((((int)1) - m_D_4) * xR) + (m_D_4 * yR));
+			t_sample dcblock_2 = __m_dcblock_13(expr_281);
 			t_sample out1 = dcblock_2;
-			t_sample dcblock_1 = __m_dcblock_14(expr_268);
+			t_sample dcblock_1 = __m_dcblock_14(expr_282);
 			t_sample out2 = dcblock_1;
 			// assign results to output buffer;
 			(*(__out1++)) = out1;
