@@ -39,33 +39,7 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-7",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 506.5, 592.0, 51.0, 22.0 ],
-					"style" : "",
-					"text" : "dcblock"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-3",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 33.0, 592.0, 51.0, 22.0 ],
-					"style" : "",
-					"text" : "dcblock"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "Param A(0, min = 0, max = 1);\r\nParam B(0, min = 0, max = 1);\r\nParam C(1, min = 0, max = 2);\r\nParam D(0.5, min = 0, max = 1);\r\nParam E(0, min = 0, max = 1);\r\nParam Push(0, min = 0, max = 1);\r\n\r\nHistory yLp(0);\r\nHistory yLpp(0);\r\n\r\nHistory yRp(0);\r\nHistory yRpp(0);\r\n\r\nHistory param_gain(samplerate);\r\nHistory sum_db(0);\r\n\r\nxL = in1;\r\nxR = in2;\r\n\r\ngainL = atodb(xL);\r\ngainR = atodb(xR);\r\n\r\nif(gainL < -50) {\r\n\tif(sum_db > samplerate / 60) {\r\n\t\tparam_gain = samplerate;\r\n\t}\r\n\telse {\r\n\t\tsum_db += 1;\r\n\t}\r\n}\r\nelse {\r\n\tsum_db = 0;\r\n}\r\n\r\n\r\ndrywet = D;\r\nspeed = C;\r\nres = (0.001 * sqrt(2) * pow(1000, B));\r\n\r\nif(speed == 0) {\r\n\tparam_gain = samplerate;\r\n}\r\nfreq = A * (param_gain / samplerate);\r\n\r\nfc = 20.0 * pow(1000.0, freq) / samplerate;\r\n\r\na1 =  (1.0 + 2.0 * res * PI * fc + 4.0 * (PI * fc) * (PI * fc));\r\na2 = (-2.0 + 8.0 * (PI * fc) * (PI * fc));\r\na3 =  (1.0 - 2.0 * res * PI * fc + 4.0 * (PI * fc) * (PI * fc));\r\n\r\n\r\nb0 =  4.0 * (PI * fc) * (PI * fc);\r\nb1 =  8.0 * (PI * fc) * (PI * fc);\r\nb2 =  4.0 * (PI * fc) * (PI * fc);\r\n\r\na2 /= a1;\r\na3 /= a1;\r\nb0 /= a1;\r\nb1 /= a1;\r\nb2 /= a1;\r\n\r\nsum_x_bx_L = b0 * xL + b1 * yLp + b2 * yLpp;\r\nsum_x_ay_L = a2 * yLp + a3 * yLpp;\r\n\r\nsum_x_bx_R = b0 * xR + b1 * yRp + b2 * yRpp;\r\nsum_x_ay_R = a2 * yRp + a3 * yRpp;\r\n\r\nyL = sum_x_bx_L - sum_x_ay_L;\r\nyR = sum_x_bx_R - sum_x_ay_R;\r\n\r\nyLpp = yLp;\r\nyLp = yL;\r\n\r\nyRpp = yRp;\r\nyRp = yR;\r\n\r\nparam_gain -= speed;\r\nif(param_gain < 0) {\r\n\tparam_gain = 0;\r\n}\r\n\r\nout1 = (1.0 - drywet) * xL + drywet * yL;\r\nout2 = (1.0 - drywet) * xR + drywet * yR;\r\n//out1 = drywet * yL;\r\n//out2 = drywet * yR;",
+					"code" : "Param A(0,    min = 0, max = 1);\r\nParam B(0,    min = 0, max = 1);\r\nParam C(1,    min = 0, max = 2);\r\nParam D(0.5,  min = 0, max = 1);\r\nParam E(0,    min = 0, max = 1);\r\nParam Push(0, min = 0, max = 1);\r\n\r\nHistory yLp(0);\r\nHistory yLpp(0);\r\n\r\nHistory yRp(0);\r\nHistory yRpp(0);\r\n\r\nHistory param_gain(samplerate);\r\nHistory sum_db(0);\r\n\r\nHistory flag(0);\r\n\r\nxL = in1;\r\nxR = in2;\r\n\r\ngainL = atodb(xL);\r\ngainR = atodb(xR);\r\ngain = (gainL + gainR) / 2;\r\n\r\nif(gain < -50) {\r\n\tif(sum_db > samplerate / 20) {\r\n\t\tparam_gain = samplerate;\r\n\t\tflag = 0;\r\n\t}\r\n\telse {\r\n\t\tsum_db += 1;\r\n\t}\r\n}\r\nelse {\r\n\tsum_db = 0;\r\n}\r\n\r\ndrywet = D;\r\nspeed = C;\r\nres = (0.001 * sqrt(2) * pow(1000, B));\r\n\r\nif(speed == 0) {\r\n\tparam_gain = samplerate;\r\n}\r\nfreq = A * (param_gain / samplerate);\r\n\r\nfc = 20.0 * pow(1000.0, freq) / samplerate;\r\n\r\na1 =  (1.0 + 2.0 * res * PI * fc + 4.0 * (PI * fc) * (PI * fc));\r\na2 = (-2.0 + 8.0 * (PI * fc) * (PI * fc));\r\na3 =  (1.0 - 2.0 * res * PI * fc + 4.0 * (PI * fc) * (PI * fc));\r\n\r\nb0 =  4.0 * (PI * fc) * (PI * fc);\r\nb1 =  8.0 * (PI * fc) * (PI * fc);\r\nb2 =  4.0 * (PI * fc) * (PI * fc);\r\n\r\na2 /= a1;\r\na3 /= a1;\r\nb0 /= a1;\r\nb1 /= a1;\r\nb2 /= a1;\r\n\r\nsum_x_bx_L = b0 * xL + b1 * yLp + b2 * yLpp;\r\nsum_x_ay_L = a2 * yLp + a3 * yLpp;\r\n\r\nsum_x_bx_R = b0 * xR + b1 * yRp + b2 * yRpp;\r\nsum_x_ay_R = a2 * yRp + a3 * yRpp;\r\n\r\nyL = sum_x_bx_L - sum_x_ay_L;\r\nyR = sum_x_bx_R - sum_x_ay_R;\r\n\r\nyLpp = yLp;\r\nyLp = yL;\r\n\r\nyRpp = yRp;\r\nyRp = yR;\r\n\r\nif(flag == 0) {\r\n\tparam_gain -= speed;\r\n}\r\nelse if(flag == 1) {\r\n\tparam_gain += speed;\r\n}\r\n\r\nif(param_gain < samplerate / 4) {\r\n\tflag = 1;\r\n}\r\nelse if(param_gain >= samplerate) {\r\n\tflag = 2;\r\n}\r\n\r\nout1 = dcblock((1.0 - drywet) * xL + drywet * yL);\r\nout2 = dcblock((1.0 - drywet) * xR + drywet * yR);",
 					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -85,7 +59,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 506.5, 626.0, 37.0, 22.0 ],
+					"patching_rect" : [ 506.5, 595.0, 37.0, 22.0 ],
 					"style" : "",
 					"text" : "out 2"
 				}
@@ -123,7 +97,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 33.0, 626.0, 37.0, 22.0 ],
+					"patching_rect" : [ 33.0, 595.0, 37.0, 22.0 ],
 					"style" : "",
 					"text" : "out 1"
 				}
@@ -153,25 +127,7 @@
 					"destination" : [ "obj-4", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"source" : [ "obj-3", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-3", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-6", 1 ]
 				}
 
 			}
@@ -180,7 +136,7 @@
 					"destination" : [ "obj-5", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"source" : [ "obj-7", 0 ]
+					"source" : [ "obj-6", 1 ]
 				}
 
 			}
