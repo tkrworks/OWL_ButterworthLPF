@@ -56,7 +56,7 @@ typedef struct State {
 		vectorsize = __vs;
 		samplerate = __sr;
 		m_A_1 = ((int)0);
-		m_B_2 = ((t_sample)0.1);
+		m_B_2 = ((int)0);
 		m_C_3 = ((int)1);
 		m_D_4 = ((t_sample)0.5);
 		m_E_5 = ((int)0);
@@ -87,13 +87,8 @@ typedef struct State {
 			return __exception;
 			
 		};
-		t_sample freq = m_A_1;
 		t_sample speed = m_C_3;
-		t_sample fc = safediv((((int)20) * safepow(((int)1000), freq)), samplerate);
-		t_sample a2 = ((((int)-2) + ((((int)8) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc))) * ((t_sample)2.2));
-		t_sample b0 = ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
-		t_sample b1 = ((((int)8) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
-		t_sample b2 = ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
+		t_sample res = (((t_sample)0.0014142135623731) * safepow(((int)1000), m_B_2));
 		// the main sample loop;
 		while ((__n--)) {
 			const t_sample in1 = (*(__in1++));
@@ -114,18 +109,27 @@ typedef struct State {
 				m_sum_db_12 = ((int)0);
 				
 			};
-			t_sample res = (m_B_2 * safediv(m_param_gain_11, samplerate));
-			t_sample a1 = (((((int)1) + (((((int)2) * res) * ((t_sample)3.1415926535898)) * fc)) + ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc))) * ((t_sample)2.2));
-			t_sample a3 = (((((int)1) - (((((int)2) * res) * ((t_sample)3.1415926535898)) * fc)) + ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc))) * ((t_sample)2.2));
-			t_sample a_24 = safediv(a2, a1);
-			t_sample a_25 = safediv(a3, a1);
-			t_sample b_26 = safediv(b0, a1);
-			t_sample b_27 = safediv(b1, a1);
-			t_sample b_28 = safediv(b2, a1);
-			t_sample sum_x_bx_L = (((b_26 * xL) + (b_27 * m_yLp_7)) + (b_28 * m_yLpp_8));
-			t_sample sum_x_ay_L = ((a_24 * m_yLp_7) + (a_25 * m_yLpp_8));
-			t_sample sum_x_bx_R = (((b_26 * xR) + (b_27 * m_yRp_9)) + (b_28 * m_yRpp_10));
-			t_sample sum_x_ay_R = ((a_24 * m_yRp_9) + (a_25 * m_yRpp_10));
+			if ((speed == ((int)0))) {
+				m_param_gain_11 = samplerate;
+				
+			};
+			t_sample freq = (m_A_1 * safediv(m_param_gain_11, samplerate));
+			t_sample fc = safediv((((int)20) * safepow(((int)1000), freq)), samplerate);
+			t_sample a1 = ((((int)1) + (((((int)2) * res) * ((t_sample)3.1415926535898)) * fc)) + ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc)));
+			t_sample a2 = (((int)-2) + ((((int)8) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc)));
+			t_sample a3 = ((((int)1) - (((((int)2) * res) * ((t_sample)3.1415926535898)) * fc)) + ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc)));
+			t_sample b0 = ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
+			t_sample b1 = ((((int)8) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
+			t_sample b2 = ((((int)4) * (((t_sample)3.1415926535898) * fc)) * (((t_sample)3.1415926535898) * fc));
+			t_sample a_234 = safediv(a2, a1);
+			t_sample a_235 = safediv(a3, a1);
+			t_sample b_236 = safediv(b0, a1);
+			t_sample b_237 = safediv(b1, a1);
+			t_sample b_238 = safediv(b2, a1);
+			t_sample sum_x_bx_L = (((b_236 * xL) + (b_237 * m_yLp_7)) + (b_238 * m_yLpp_8));
+			t_sample sum_x_ay_L = ((a_234 * m_yLp_7) + (a_235 * m_yLpp_8));
+			t_sample sum_x_bx_R = (((b_236 * xR) + (b_237 * m_yRp_9)) + (b_238 * m_yRpp_10));
+			t_sample sum_x_ay_R = ((a_234 * m_yRp_9) + (a_235 * m_yRpp_10));
 			t_sample yL = (sum_x_bx_L - sum_x_ay_L);
 			t_sample yR = (sum_x_bx_R - sum_x_ay_R);
 			m_yLpp_8 = m_yLp_7;
@@ -137,11 +141,11 @@ typedef struct State {
 				m_param_gain_11 = ((int)0);
 				
 			};
-			t_sample expr_29 = (((((int)1) - m_D_4) * xL) + (m_D_4 * yL));
-			t_sample expr_30 = (((((int)1) - m_D_4) * xR) + (m_D_4 * yR));
-			t_sample dcblock_2 = __m_dcblock_13(expr_29);
+			t_sample expr_239 = (((((int)1) - m_D_4) * xL) + (m_D_4 * yL));
+			t_sample expr_240 = (((((int)1) - m_D_4) * xR) + (m_D_4 * yR));
+			t_sample dcblock_2 = __m_dcblock_13(expr_239);
 			t_sample out1 = dcblock_2;
-			t_sample dcblock_1 = __m_dcblock_14(expr_30);
+			t_sample dcblock_1 = __m_dcblock_14(expr_240);
 			t_sample out2 = dcblock_1;
 			// assign results to output buffer;
 			(*(__out1++)) = out1;
@@ -155,7 +159,7 @@ typedef struct State {
 		m_A_1 = (_value < 0 ? 0 : (_value > 1 ? 1 : _value));
 	};
 	inline void set_B(t_param _value) {
-		m_B_2 = (_value < 0 ? 0 : (_value > 1.4 ? 1.4 : _value));
+		m_B_2 = (_value < 0 ? 0 : (_value > 1 ? 1 : _value));
 	};
 	inline void set_C(t_param _value) {
 		m_C_3 = (_value < 0 ? 0 : (_value > 2 ? 2 : _value));
@@ -339,7 +343,7 @@ void *create(t_param sr, long vs) {
 	pi->inputmax = 1;
 	pi->hasminmax = true;
 	pi->outputmin = 0;
-	pi->outputmax = 1.4;
+	pi->outputmax = 1;
 	pi->exp = 0;
 	pi->units = "";		// no units defined
 	// initialize parameter 2 ("m_C_3")
